@@ -1,3 +1,6 @@
+gherkin-doctor:
+  feature-location: ${SOURCE_FEATURE_FILES}
+
 spring:
   main:
     lazy-initialization: true
