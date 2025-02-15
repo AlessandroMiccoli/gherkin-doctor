@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Configuration
 @ConfigurationProperties(prefix = "gherkin-doctor")
 public class GherkinDoctorConfiguration {
@@ -17,7 +19,7 @@ public class GherkinDoctorConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (featureLocation == null) {
-            throw new ConfigurationException("Feature location is a mandatory property");
+            throw new ConfigurationException("Feature resource location is a mandatory property.");
         }
     }
 }

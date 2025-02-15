@@ -4,11 +4,14 @@ import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.*;
 import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
 import io.github.amiccoli.gherkindoctor.exception.InvalidFileException;
+import io.github.amiccoli.gherkindoctor.util.FileUtil;
 import java.io.IOException;
+import java.lang.Exception;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,75 +33,49 @@ public class FeatureReader {
             .build();
 
     public List<GherkinDocument> read() {
-        val maybePaths = findPaths(configuration.getFeatureLocation());
+        var maybePaths = FileUtil.findPaths(configuration.getFeatureLocation());
 
-        List<GherkinDocument> gherkinDocuments = new ArrayList<>();
+        var gherkinDocuments = maybePaths.stream()
+                .map(path -> {
 
-        maybePaths.forEach(path -> {
-            try {
-                val featureContent = Files.readString(path);
-                val envelopeSource = Envelope.of(
-                        new Source(path.toString(),
-                                featureContent,
-                                TEXT_X_CUCUMBER_GHERKIN_PLAIN)
-                );
+                    val featureContent = FileUtil.readFile(path);
+                    val envelopeSource = Envelope.of(
+                            new Source(path.toString(),
+                                    featureContent,
+                                    TEXT_X_CUCUMBER_GHERKIN_PLAIN)
+                    );
 
-                var envelopes = PARSER.parse(envelopeSource).toList();
+                    var envelopes = PARSER.parse(envelopeSource).toList();
 
-                var parseError = maybeParseError(envelopes);
-
-                if (parseError.isPresent()) {
-                    log.error("Parse Error: {}", parseError.get().getMessage());
-                } else {
-                    log.info("No parse errors found. Proceeding with Gherkin Document collection.");
-
-                    envelopes.stream()
+                    return envelopes.stream()
                             .map(Envelope::getGherkinDocument)
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .findFirst()
-                            .ifPresentOrElse(
-                                    gherkinDocuments::add,
-                                    () -> log.error("No Gherkin Document found for path [{}]", path)
+                            .orElseGet(
+                                    () -> {
+                                        log.error("No Gherkin Document found for path [{}]. Parse error: [{}].",
+                                                path.getFileName(),
+                                                maybeParseErrorMessage(envelopes)
+                                        );
+                                        return null;
+                                    }
                             );
-                }
-            }
-            catch (IOException exception) {
-                throw new InvalidFileException("Not capable to walk through files of [%s] due to: [%s]."
-                        .formatted(path.getFileName(), exception.getMessage()), exception
-                );
-            }
-        });
+                })
+                .filter(Objects::nonNull)
+                .toList();
 
         log.info("Found [{}] Gherkin Documents in [{}] files.", gherkinDocuments.size(), maybePaths.size());
         return gherkinDocuments;
     }
 
-    private List<Path> findPaths(String inputPath) {
-        val path = Path.of(inputPath);
-
-        if (!Files.exists(path)) {
-            throw new InvalidFileException("Files don't exist for [%s].".formatted(path.toAbsolutePath()));
-        }
-
-        try (val stream = Files.walk(path)) {
-             return stream
-                     .filter(Files::isRegularFile)
-                     .filter(Files::isReadable)
-                     .filter(p -> p.toString().endsWith(".feature"))
-                     .toList();
-        } catch (IOException exception) {
-            throw new InvalidFileException("Not capable to walk through files of [%s]"
-                    .formatted(path.getFileName()), exception
-            );
-        }
-    }
-
-    private Optional<ParseError> maybeParseError(List<Envelope> envelopes) {
+    private String maybeParseErrorMessage(List<Envelope> envelopes) {
         return envelopes.stream()
                 .map(Envelope::getParseError)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst();
+                .findFirst()
+                .map(ParseError::getMessage)
+                .orElse("Unknown error");
     }
 }
