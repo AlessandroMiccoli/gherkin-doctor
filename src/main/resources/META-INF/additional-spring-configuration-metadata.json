@@ -1,1 +1,11 @@
-{}
+{
+  "properties": [
+    {
+      "name": "gherkin-doctor.feature-location",
+      "type": "java.lang.String",
+      "description": "The location of the Gherkin feature files to be read and parsed.",
+      "defaultValue": "features",
+      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration"
+    }
+  ]
+}

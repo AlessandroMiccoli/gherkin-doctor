@@ -47,7 +47,6 @@ Thumbs.db
 *.mov
 *.wmv
 
-
 # Ignore Gradle project-specific cache directory
 .gradle
 
@@ -57,3 +56,6 @@ gradle.properties
 
 # Ignore local properties
 **/local.properties
+
+# Ignore local env file
+.env
