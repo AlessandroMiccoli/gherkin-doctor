@@ -13,6 +13,14 @@ import lombok.val;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtil {
 
+    /**
+     * Finds and returns a list of all readable `.feature` files within the specified location.
+     * The search is performed recursively, including all subdirectories.
+     *
+     * @param location the root directory to start searching for `.feature` files
+     * @return a list of {@link Path} objects representing the found `.feature` files
+     * @throws InvalidFileException if an I/O error occurs while walking the file tree
+     */
     public static List<Path> findPaths(String location) {
         Path path = FileUtil.getRelativePath(location);
 
@@ -29,6 +37,13 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Reads the content of a file at the specified path and returns it as a String.
+     *
+     * @param inputPath the {@link Path} to the file to be read
+     * @return the content of the file as a {@link String}
+     * @throws InvalidFileException if an I/O error occurs while reading the file
+     */
     public static String readFile(Path inputPath) {
         try {
             return Files.readString(inputPath);

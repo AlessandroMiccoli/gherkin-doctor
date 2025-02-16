@@ -3,13 +3,7 @@ package io.github.amiccoli.gherkindoctor.reader;
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.*;
 import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
-import io.github.amiccoli.gherkindoctor.exception.InvalidFileException;
 import io.github.amiccoli.gherkindoctor.util.FileUtil;
-import java.io.IOException;
-import java.lang.Exception;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +26,16 @@ public class FeatureReader {
             .includePickles(false)
             .build();
 
+    /**
+     * Reads and parses Gherkin feature files from the configured feature location.
+     * <p>
+     * This method searches recursively for all `.feature` files, parses their content using
+     * the Gherkin parser, and collects the resulting {@link GherkinDocument} objects.
+     * If a file cannot be parsed into a GherkinDocument, an error is logged and the file is skipped.
+     * </p>
+     *
+     * @return a list of {@link GherkinDocument} objects representing the parsed feature files
+     */
     public List<GherkinDocument> read() {
         var maybePaths = FileUtil.findPaths(configuration.getFeatureLocation());
 
