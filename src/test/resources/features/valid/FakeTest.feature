@@ -1,6 +1,6 @@
-Feature: Mock feature
+Feature: Fake feature
 
-  Scenario: Mock scenario
+  Scenario: Fake scenario
     Given the precondition
     When the user does any action
     Then verify everything is correct

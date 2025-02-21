@@ -37,14 +37,14 @@ class FileUtilTest {
         assertThat(paths).hasSize(expectedFeatureFileFound);
 
         if(!paths.isEmpty()) {
-            assertThat(paths.get(0).toString()).endsWith("/features/valid/MockTest.feature");
+            assertThat(paths.get(0).toString()).endsWith("/features/valid/FakeTest.feature");
         }
     }
 
     @Test
     void shouldReadFeatureFileWhenValidLocationIsProvided() {
         // Given
-        val relativePath = getRelativeTestPath("features/read/MockReadTest.feature");
+        val relativePath = getRelativeTestPath("features/read/FakeReadTest.feature");
 
         // When
         val content = FileUtil.readFile(Path.of(relativePath));
@@ -52,7 +52,7 @@ class FileUtilTest {
         assertThat(content)
                 .as("Content of the feature file should match the expected text")
                 .isNotNull()
-                .hasToString("Feature: Mock read feature");
+                .hasToString("Feature: Fake read feature");
 
     }
 

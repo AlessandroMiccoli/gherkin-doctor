@@ -64,9 +64,9 @@ class FeatureReaderTest {
         reader.read();
 
         // Then
-        var logMessage = "No Gherkin Document found for path [MockInvalidTest.feature]. Parse error: [(8:1): "
+        var logMessage = "No Gherkin Document found for path [FakeInvalidTest.feature]. Parse error: [(8:1): "
                 + "expected: #EOF, #TableRow, #DocStringSeparator, #StepLine, #TagLine, #ExamplesLine, #ScenarioLine, "
-                + "#RuleLine, #Comment, #Empty, got 'Feature: Mock invalid feature 2'].";
+                + "#RuleLine, #Comment, #Empty, got 'Feature: Fake invalid feature 2'].";
         LoggerTestHelper.verifyContainLog(listAppender, Level.ERROR, logMessage);
         LoggerTestHelper.stopLogger(listAppender);
     }
