@@ -1,6 +1,18 @@
 gherkin-doctor:
   feature-location: ${SOURCE_FEATURE_FILES:features}
+  rules:
+    indentation:
+      active: true
+      mappings:
+        feature: 0
+        background: 2
+        scenario: 2
+        step: 4
+        examples: 4
 
 spring:
   main:
     lazy-initialization: true
+  shell:
+    interactive:
+      enabled: true

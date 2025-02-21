@@ -1,8 +1,0 @@
-gherkin-doctor:
-  feature-location: features
-
-
-#Combine the properties with application-test.yml.
-spring:
-  config:
-    import: classpath:application-test.yml

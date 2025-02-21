@@ -37,9 +37,9 @@ public class FeatureReader {
      * @return a list of {@link GherkinDocument} objects representing the parsed feature files
      */
     public List<GherkinDocument> read() {
-        var maybePaths = FileUtil.findPaths(configuration.getFeatureLocation());
+        val maybePaths = FileUtil.findPaths(configuration.getFeatureLocation());
 
-        var gherkinDocuments = maybePaths.stream()
+        val gherkinDocuments = maybePaths.stream()
                 .map(path -> {
 
                     val featureContent = FileUtil.readFile(path);
@@ -49,7 +49,7 @@ public class FeatureReader {
                                     TEXT_X_CUCUMBER_GHERKIN_PLAIN)
                     );
 
-                    var envelopes = PARSER.parse(envelopeSource).toList();
+                    val envelopes = PARSER.parse(envelopeSource).toList();
 
                     return envelopes.stream()
                             .map(Envelope::getGherkinDocument)
