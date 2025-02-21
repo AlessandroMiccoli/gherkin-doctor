@@ -1,0 +1,28 @@
+package io.github.amiccoli.gherkindoctor.configuration;
+
+public enum GherkinElement {
+    FEATURE,
+    FEATURE_DESCRIPTION,
+    FEATURE_TAG,
+
+    RULE,
+    RULE_DESCRIPTION,
+    RULE_TAG,
+    RULE_BACKGROUND,
+    RULE_SCENARIO,
+
+    BACKGROUND,
+    BACKGROUND_DESCRIPTION,
+
+    SCENARIO,
+    SCENARIO_DESCRIPTION,
+    SCENARIO_TAG,
+
+    STEP,
+    STEP_DOC_STRING,
+    STEP_DATA_TABLE,
+
+    EXAMPLES,
+    EXAMPLE_DESCRIPTION,
+    EXAMPLE_TAG
+}

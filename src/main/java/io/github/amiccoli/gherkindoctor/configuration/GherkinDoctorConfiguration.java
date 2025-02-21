@@ -28,9 +28,11 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @Configuration
 @ConfigurationProperties(prefix = "gherkin-doctor")
+@ToString
 public class GherkinDoctorConfiguration {
 
     private String featureLocation;
+    private RulesConfiguration rules;
 
     /**
      * Checks if the mandatory configuration properties are set.
@@ -42,5 +44,7 @@ public class GherkinDoctorConfiguration {
         if (featureLocation == null) {
             throw new ConfigurationException("Feature resource location is a mandatory property.");
         }
+
+        rules.validate();
     }
 }

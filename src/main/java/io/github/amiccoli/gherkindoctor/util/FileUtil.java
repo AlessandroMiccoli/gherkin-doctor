@@ -22,7 +22,7 @@ public class FileUtil {
      * @throws InvalidFileException if an I/O error occurs while walking the file tree
      */
     public static List<Path> findPaths(String location) {
-        Path path = FileUtil.getRelativePath(location);
+        val path = FileUtil.getRelativePath(location);
 
         try (val stream = Files.walk(path)) {
             return stream

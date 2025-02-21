@@ -1,0 +1,8 @@
+gherkin-doctor:
+  feature-location: "features"
+  rules:
+    indentation:
+      active: true
+      mappings:
+        feature: 0
+        scenario: 2
