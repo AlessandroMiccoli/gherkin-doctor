@@ -35,9 +35,14 @@ public class GherkinDoctorConfiguration {
     private RulesConfiguration rules;
 
     /**
-     * Checks if the mandatory configuration properties are set.
+     * Initializes the class after the dependencies are injected.
+     * <p>
+     * This method is called automatically after the object is constructed and
+     * all dependencies are injected by the framework. It checks whether the
+     * feature location is provided and validates the configuration rules.
+     * </p>
      *
-     * @throws ConfigurationException if <code>featureLocation</code> is null
+     * @throws ConfigurationException if the feature location is not set (null) or if validation fails.
      */
     @PostConstruct
     public void postConstruct() {

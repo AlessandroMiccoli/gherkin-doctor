@@ -10,18 +10,46 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GherkinUtil {
 
+    /**
+     * Ensures the presence of a Gherkin document URI, throwing an exception if absent.
+     *
+     * @param featureUri an {@link Optional} containing the feature URI
+     * @return the feature URI if present
+     * @throws MissingGherkinElementException if the feature URI is not present
+     */
     public static String requireGherkinDocUri(Optional<String> featureUri) {
         return requirePresent(featureUri, "Feature URI is missing.");
     }
 
+    /**
+     * Ensures the presence of a Gherkin {@link Feature}, throwing an exception if absent.
+     *
+     * @param feature an {@link Optional} containing the Gherkin feature
+     * @return the {@link Feature} if present
+     * @throws MissingGherkinElementException if the feature is not present
+     */
     public static Feature requireFeature(Optional<Feature> feature) {
         return requirePresent(feature, "Feature is missing.");
     }
 
+    /**
+     * Ensures the presence of a Gherkin {@link Scenario}, throwing an exception if absent.
+     *
+     * @param scenario an {@link Optional} containing the Gherkin scenario
+     * @return the {@link Scenario} if present
+     * @throws MissingGherkinElementException if the scenario is not present
+     */
     public static Scenario requireScenario(Optional<Scenario> scenario) {
         return requirePresent(scenario, "Feature is missing.");
     }
 
+    /**
+     * Ensures the presence of a location column value, throwing an exception if absent.
+     *
+     * @param column an {@link Optional} containing the column value
+     * @return the column value if present
+     * @throws MissingGherkinElementException if the column value is not present
+     */
     public static Long requireColumn(Optional<Long> column) {
         return requirePresent(column, "Location column is missing.");
     }

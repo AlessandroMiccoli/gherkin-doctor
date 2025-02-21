@@ -17,6 +17,15 @@ public class RulesConfiguration {
 
     BaseRuleConfiguration<Long> indentation;
 
+    /**
+     * Validates the indentation rule configuration.
+     * <p>
+     * If the indentation rule is active but has no mappings, a {@link ConfigurationException} is thrown.
+     * Otherwise, if the rule is inactive, validation is skipped, and mappings are reset.
+     *
+     *
+     * @throws ConfigurationException if the indentation rule is active but has no mappings.
+     */
     public void validate() {
         validateIndentation();
     }
