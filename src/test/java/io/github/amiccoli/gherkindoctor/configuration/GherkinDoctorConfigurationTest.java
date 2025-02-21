@@ -76,7 +76,7 @@ class GherkinDoctorConfigurationTest {
         // When
         config.postConstruct();
 
-        //
+        // Then
         verify(mockRulesConfig).validate();
     }
 }

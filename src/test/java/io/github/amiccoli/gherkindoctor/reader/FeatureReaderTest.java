@@ -1,7 +1,9 @@
 package io.github.amiccoli.gherkindoctor.reader;
 
 import ch.qos.logback.classic.Level;
+import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
 import io.github.amiccoli.gherkindoctor.helper.LoggerTestHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,10 +14,18 @@ import static org.mockito.BDDMockito.given;
 
 class FeatureReaderTest {
 
+    private GherkinDoctorConfiguration config;
+    private FeatureReader reader;
+
+    @BeforeEach
+    void setUp() {
+        config = mockGherkinDoctorConfiguration();
+        reader = new FeatureReader(config);
+    }
+
     @Test
     void shouldNotReadGherkinDocumentsWhenLocationHasNotFeatureFiles() {
         // Given
-        var config = mockGherkinDoctorConfiguration();
         given(config.getFeatureLocation()).willReturn("features/empty");
         var featureReader = new FeatureReader(config);
 
@@ -32,12 +42,10 @@ class FeatureReaderTest {
         // Given
         var listAppender = LoggerTestHelper.startLogger(FeatureReader.class);
 
-        var config = mockGherkinDoctorConfiguration();
         given(config.getFeatureLocation()).willReturn(featureLocation);
-        var featureReader = new FeatureReader(config);
 
         // When
-        featureReader.read();
+        reader.read();
 
         // Then
         var logMessage = "Found [%s] Gherkin Documents in [%s] files.".formatted(filesRead, docsRead);
@@ -50,12 +58,10 @@ class FeatureReaderTest {
         // Given
         var listAppender = LoggerTestHelper.startLogger(FeatureReader.class);
 
-        var config = mockGherkinDoctorConfiguration();
         given(config.getFeatureLocation()).willReturn("features/invalid");
-        var featureReader = new FeatureReader(config);
 
         // When
-        featureReader.read();
+        reader.read();
 
         // Then
         var logMessage = "No Gherkin Document found for path [MockInvalidTest.feature]. Parse error: [(8:1): "

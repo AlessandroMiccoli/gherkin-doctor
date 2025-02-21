@@ -1,19 +1,24 @@
 package io.github.amiccoli.gherkindoctor.rule;
 
 import ch.qos.logback.classic.Level;
+import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
 import io.github.amiccoli.gherkindoctor.configuration.GherkinElement;
+import io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration;
 import io.github.amiccoli.gherkindoctor.helper.LoggerTestHelper;
 import java.util.EnumMap;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.BACKGROUND;
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE;
-import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE_DESCRIPTION;
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
-import static io.github.amiccoli.gherkindoctor.helper.FeatureReaderHelper.mockInvalidGherkinDocumentForBackgroundIndentationRule;
-import static io.github.amiccoli.gherkindoctor.helper.FeatureReaderHelper.mockInvalidGherkinDocumentForFeatureIndentationRule;
-import static io.github.amiccoli.gherkindoctor.helper.FeatureReaderHelper.mockInvalidGherkinDocumentForScenarioIndentationRule;
-import static io.github.amiccoli.gherkindoctor.helper.FeatureReaderHelper.mockValidGherkinDocumentIndentationRule;
+import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockInvalidGherkinDocument;
+import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockValidGherkinDocument;
 import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDoctorConfigurationHelper.mockGherkinDoctorConfiguration;
 import static io.github.amiccoli.gherkindoctor.helper.MockRuleConstraintHelper.mockIndentationRuleConfiguration;
 import static io.github.amiccoli.gherkindoctor.helper.RulesConfigurationHelper.mockRulesConfiguration;
@@ -24,14 +29,23 @@ import static org.mockito.Mockito.verify;
 
 class IndentationRuleTest {
 
+    private IndentationRule rule;
+    private GherkinDoctorConfiguration mockGherkinDoctorConfig;
+    private RulesConfiguration mockRulesConfig;
+
+    @BeforeEach
+    void setUp() {
+        mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
+        mockRulesConfig = mockRulesConfiguration();
+        rule = new IndentationRule();
+    }
+
     @Test
     void shouldSetIndentationConstraints() {
         // Given
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var rule = new IndentationRule();
+        rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
-        rule.setConstraint(mockGherkinDoctorConfig);
         var constraints = rule.getIndentationConstraints();
 
         // Then
@@ -44,9 +58,7 @@ class IndentationRuleTest {
     @Test
     void shouldNotReturnRuleErrorWhenIndentationConstraintsArePassed() {
         // Given
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var mockGherkinDocument = mockValidGherkinDocumentIndentationRule();
-        var rule = new IndentationRule();
+        var mockGherkinDocument = mockValidGherkinDocument();
         rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
@@ -58,19 +70,17 @@ class IndentationRuleTest {
         verify((mockGherkinDocument.getFeature().get().getChildren().get(0).getScenario().get().getLocation())).getColumn();
     }
 
-    @Test
-    void shouldReturnFeatureRuleErrorWhenIndentationConstraintFails() {
+    @ParameterizedTest
+    @MethodSource("indentationFailureCases")
+    void shouldReturnRuleErrorWhenIndentationConstraintFails(GherkinElement element, long expected, long actual) {
         // Given
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var mockRulesConfig = mockRulesConfiguration();
         given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
         var mockIndentationRule = mockIndentationRuleConfiguration(
-                new EnumMap<>(GherkinElement.class) {{ put(FEATURE, 1L); }}
+                new EnumMap<>(GherkinElement.class) {{ put(element, expected); }}
         );
         given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
 
-        var mockGherkinDocument = mockInvalidGherkinDocumentForFeatureIndentationRule();
-        var rule = new IndentationRule();
+        var mockGherkinDocument = mockInvalidGherkinDocument();
         rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
@@ -81,85 +91,26 @@ class IndentationRuleTest {
 
         var ruleError = ruleErrors.get(0);
         assertThat(ruleError.getUri()).isEqualTo("FakeIndentationRuleTest.feature");
-        assertThat(ruleError.getKeyword()).isEqualTo(FEATURE);
+        assertThat(ruleError.getKeyword()).isEqualTo(element);
         assertThat(ruleError.getType()).isEqualTo(INDENTATION);
-        assertThat(ruleError.getActual()).isEqualTo("Actual feature indentation is 2.");
-        assertThat(ruleError.getExpected()).isEqualTo("Expected feature indentation is 1.");
+        assertThat(ruleError.getActual())
+                .isEqualTo("Actual %s indentation is %d.".formatted(element.getValue(), actual));
+        assertThat(ruleError.getExpected())
+                .isEqualTo("Expected %s indentation is %d.".formatted(element.getValue(), expected));
     }
 
-    @Test
-    void shouldReturnBackgroundRuleErrorWhenIndentationConstraintFails() {
-        // Given
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var mockRulesConfig = mockRulesConfiguration();
-        given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
-        var mockIndentationRule = mockIndentationRuleConfiguration(
-                new EnumMap<>(GherkinElement.class) {{ put(BACKGROUND, 3L); }}
-        );
-        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
-
-        var mockGherkinDocument = mockInvalidGherkinDocumentForBackgroundIndentationRule();
-        var rule = new IndentationRule();
-        rule.setConstraint(mockGherkinDoctorConfig);
-
-        // When
-        var ruleErrors = rule.apply(mockGherkinDocument);
-
-        // Then
-        assertThat(ruleErrors).hasSize(1);
-
-        var ruleError = ruleErrors.get(0);
-        assertThat(ruleError.getUri()).isEqualTo("FakeIndentationRuleTest.feature");
-        assertThat(ruleError.getKeyword()).isEqualTo(BACKGROUND);
-        assertThat(ruleError.getType()).isEqualTo(INDENTATION);
-        assertThat(ruleError.getActual()).isEqualTo("Actual background indentation is 5.");
-        assertThat(ruleError.getExpected()).isEqualTo("Expected background indentation is 3.");
-    }
-
-    @Test
-    void shouldReturnScenarioRuleErrorWhenIndentationConstraintFails() {
-        // Given
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var mockRulesConfig = mockRulesConfiguration();
-        given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
-        var mockIndentationRule = mockIndentationRuleConfiguration(
-                new EnumMap<>(GherkinElement.class) {{ put(SCENARIO, 3L); }}
-        );
-        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
-
-        var mockGherkinDocument = mockInvalidGherkinDocumentForScenarioIndentationRule();
-        var rule = new IndentationRule();
-        rule.setConstraint(mockGherkinDoctorConfig);
-
-        // When
-        var ruleErrors = rule.apply(mockGherkinDocument);
-
-        // Then
-        assertThat(ruleErrors).hasSize(1);
-
-        var ruleError = ruleErrors.get(0);
-        assertThat(ruleError.getUri()).isEqualTo("FakeIndentationRuleTest.feature");
-        assertThat(ruleError.getKeyword()).isEqualTo(SCENARIO);
-        assertThat(ruleError.getType()).isEqualTo(INDENTATION);
-        assertThat(ruleError.getActual()).isEqualTo("Actual scenario indentation is 6.");
-        assertThat(ruleError.getExpected()).isEqualTo("Expected scenario indentation is 3.");
-    }
-
-    // TODO: this test should be parameterised including all the Gherkin elements without validation.
-    @Test
-    void shouldSkipValidationWhenIndentationConstraintIsNotHandled() {
+    @ParameterizedTest
+    @EnumSource(value = GherkinElement.class, mode = EnumSource.Mode.EXCLUDE, names = {"FEATURE", "BACKGROUND", "SCENARIO"})
+    void shouldSkipValidationWhenIndentationConstraintIsNotHandled(GherkinElement element) {
         // Given
         var listAppender = LoggerTestHelper.startLogger(IndentationRule.class);
-        var mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        var mockRulesConfig = mockRulesConfiguration();
         given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
         var mockIndentationRule = mockIndentationRuleConfiguration(
-                new EnumMap<>(GherkinElement.class) {{ put(FEATURE_DESCRIPTION, 3L); }}
+                new EnumMap<>(GherkinElement.class) {{ put(element, 3L); }}
         );
         given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
 
-        var mockGherkinDocument = mockValidGherkinDocumentIndentationRule();
-        var rule = new IndentationRule();
+        var mockGherkinDocument = mockValidGherkinDocument();
         rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
@@ -168,8 +119,17 @@ class IndentationRuleTest {
         // Then
         assertThat(ruleErrors).isEmpty();
 
-        var logMessage = "Skip validation due to Gherkin element [FEATURE_DESCRIPTION] not currently handled for indentation.";
+        var logMessage = "Skip validation due to Gherkin element [%s] not currently handled for indentation."
+                .formatted(element);
         LoggerTestHelper.verifyLog(listAppender, Level.WARN, logMessage);
         LoggerTestHelper.stopLogger(listAppender);
+    }
+
+    static Stream<Arguments> indentationFailureCases() {
+        return Stream.of(
+                Arguments.of(FEATURE, 1L, 2L),
+                Arguments.of(BACKGROUND, 3L, 5L),
+                Arguments.of(SCENARIO, 3L, 6L)
+        );
     }
 }
