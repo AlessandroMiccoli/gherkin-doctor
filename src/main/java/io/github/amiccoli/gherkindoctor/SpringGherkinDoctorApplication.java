@@ -1,6 +1,6 @@
 package io.github.amiccoli.gherkindoctor;
 
-import io.github.amiccoli.gherkindoctor.reader.FeatureReader;
+import io.github.amiccoli.gherkindoctor.core.GherkinDoctorToolkit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -15,12 +15,12 @@ public class SpringGherkinDoctorApplication implements CommandLineRunner {
         SpringApplication.run(SpringGherkinDoctorApplication.class, args);
     }
 
-    private final FeatureReader featureReader;
+    private final GherkinDoctorToolkit toolkit;
 
     @Override
     public void run(String... args) {
-        var gherkinDocuments= featureReader.read();
-        gherkinDocuments.forEach(doc -> log.info(doc.toString()));
+//        var mappedRuleErrors = toolkit.lint();
+//        log.error(mappedRuleErrors.toString());
     }
 }
 

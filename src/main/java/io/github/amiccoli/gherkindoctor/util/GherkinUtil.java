@@ -1,7 +1,6 @@
 package io.github.amiccoli.gherkindoctor.util;
 
 import io.cucumber.messages.types.Feature;
-import io.cucumber.messages.types.Scenario;
 import io.github.amiccoli.gherkindoctor.exception.MissingGherkinElementException;
 import java.util.Optional;
 import lombok.AccessLevel;
