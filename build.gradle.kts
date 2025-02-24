@@ -32,6 +32,7 @@ repositories {
 
 val logbackVersion = "7.4"
 val springCloudVersion = "2024.0.0"
+val springShellVersion = "3.4.0"
 val cucumberGherkinVersion = "31.0.0"
 val cucumberMessagesVersion = "27.2.0"
 val jUnitVersion = "1.11.4"
@@ -41,6 +42,7 @@ dependencyManagement {
     imports {
         // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+        mavenBom("org.springframework.shell:spring-shell-dependencies:${springShellVersion}")
     }
 }
 
@@ -63,6 +65,8 @@ dependencies {
     }
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
+
+    implementation("org.springframework.shell:spring-shell-starter")
 
     /*=========*/
     /* Logging */
