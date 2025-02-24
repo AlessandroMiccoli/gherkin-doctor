@@ -1,13 +1,10 @@
 package io.github.amiccoli.gherkindoctor.rule;
 
 import ch.qos.logback.classic.Level;
-import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
 import io.github.amiccoli.gherkindoctor.configuration.GherkinElement;
-import io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration;
 import io.github.amiccoli.gherkindoctor.helper.LoggerTestHelper;
 import java.util.EnumMap;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,47 +16,19 @@ import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEAT
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
 import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockInvalidGherkinDocument;
 import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockValidGherkinDocument;
-import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDoctorConfigurationHelper.mockGherkinDoctorConfiguration;
 import static io.github.amiccoli.gherkindoctor.helper.MockRuleConstraintHelper.mockIndentationRuleConfiguration;
-import static io.github.amiccoli.gherkindoctor.helper.RulesConfigurationHelper.mockRulesConfiguration;
 import static io.github.amiccoli.gherkindoctor.rule.RuleType.INDENTATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 class IndentationRuleTest {
 
-    private IndentationRule rule;
-    private GherkinDoctorConfiguration mockGherkinDoctorConfig;
-    private RulesConfiguration mockRulesConfig;
-
-    @BeforeEach
-    void setUp() {
-        mockGherkinDoctorConfig = mockGherkinDoctorConfiguration();
-        mockRulesConfig = mockRulesConfiguration();
-        rule = new IndentationRule();
-    }
-
-    @Test
-    void shouldSetIndentationConstraints() {
-        // Given
-        rule.setConstraint(mockGherkinDoctorConfig);
-
-        // When
-        var constraints = rule.getIndentationConstraints();
-
-        // Then
-        assertThat(constraints)
-                .hasSize(2)
-                .containsEntry(FEATURE, 1L)
-                .containsEntry(GherkinElement.SCENARIO, 3L);
-    }
-
     @Test
     void shouldNotReturnRuleErrorWhenIndentationConstraintsArePassed() {
         // Given
+        var mockIndentationRule = mockIndentationRuleConfiguration();
+        var rule = new IndentationRule(mockIndentationRule.getMappings());
         var mockGherkinDocument = mockValidGherkinDocument();
-        rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
         var ruleErrors = rule.apply(mockGherkinDocument);
@@ -74,14 +43,11 @@ class IndentationRuleTest {
     @MethodSource("indentationFailureCases")
     void shouldReturnRuleErrorWhenIndentationConstraintFails(GherkinElement element, long expected, long actual) {
         // Given
-        given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
         var mockIndentationRule = mockIndentationRuleConfiguration(
                 new EnumMap<>(GherkinElement.class) {{ put(element, expected); }}
         );
-        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
-
+        var rule = new IndentationRule(mockIndentationRule.getMappings());
         var mockGherkinDocument = mockInvalidGherkinDocument();
-        rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
         var ruleErrors = rule.apply(mockGherkinDocument);
@@ -104,14 +70,11 @@ class IndentationRuleTest {
     void shouldSkipValidationWhenIndentationConstraintIsNotHandled(GherkinElement element) {
         // Given
         var listAppender = LoggerTestHelper.startLogger(IndentationRule.class);
-        given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
         var mockIndentationRule = mockIndentationRuleConfiguration(
                 new EnumMap<>(GherkinElement.class) {{ put(element, 3L); }}
         );
-        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
-
+        var rule = new IndentationRule(mockIndentationRule.getMappings());
         var mockGherkinDocument = mockValidGherkinDocument();
-        rule.setConstraint(mockGherkinDoctorConfig);
 
         // When
         var ruleErrors = rule.apply(mockGherkinDocument);

@@ -33,17 +33,6 @@ public class GherkinUtil {
     }
 
     /**
-     * Ensures the presence of a Gherkin {@link Scenario}, throwing an exception if absent.
-     *
-     * @param scenario an {@link Optional} containing the Gherkin scenario
-     * @return the {@link Scenario} if present
-     * @throws MissingGherkinElementException if the scenario is not present
-     */
-    public static Scenario requireScenario(Optional<Scenario> scenario) {
-        return requirePresent(scenario, "Feature is missing.");
-    }
-
-    /**
      * Ensures the presence of a location column value, throwing an exception if absent.
      *
      * @param column an {@link Optional} containing the column value

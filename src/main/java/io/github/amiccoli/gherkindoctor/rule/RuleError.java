@@ -15,6 +15,7 @@ public class RuleError {
     String uri;
     RuleType type;
     GherkinElement keyword;
+    Long line;
     String actual;
     String expected;
 
@@ -23,15 +24,23 @@ public class RuleError {
      *
      * @param docUri the URI of the Gherkin document where the rule violation occurred
      * @param keyword the {@link GherkinElement} for which indentation is validated
+     * @param line the line where the error is located in the Gherkin document
      * @param actual the message with the actual indentation value found for the Gherkin element
      * @param expected the message with the expected indentation value for the Gherkin element
      * @return a {@link RuleError} describing the indentation rule violation
      */
-    public static RuleError createForIndentationRule(String docUri, GherkinElement keyword, Long actual, Long expected) {
+    public static RuleError createForIndentationRule(
+            String docUri,
+            GherkinElement keyword,
+            Long line,
+            Long actual,
+            Long expected)
+    {
         return RuleError.builder()
                 .uri(docUri)
                 .type(INDENTATION)
                 .keyword(keyword)
+                .line(line)
                 .actual("Actual %s indentation is %d.".formatted(keyword.getValue(), actual))
                 .expected("Expected %s indentation is %d.".formatted(keyword.getValue(), expected))
                 .build();
