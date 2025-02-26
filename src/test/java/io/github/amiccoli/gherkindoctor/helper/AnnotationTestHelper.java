@@ -1,12 +1,5 @@
 package io.github.amiccoli.gherkindoctor.helper;
 
-/*
- * Copyright (c) 2025 Alessandro Miccoli
- *
- * gherkin-doctor - A toolkit for analyzing and improving feature files written in Gherkin syntax.
- * Licensed under the Apache License 2.0.
- */
-
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Optional;
