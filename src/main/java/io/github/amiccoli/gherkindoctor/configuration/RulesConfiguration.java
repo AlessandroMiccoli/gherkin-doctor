@@ -1,7 +1,21 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.amiccoli.gherkindoctor.configuration;
 
-import io.github.amiccoli.gherkindoctor.exception.ConfigurationException;
-import java.util.EnumMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,24 +34,23 @@ public class RulesConfiguration {
     /**
      * Validates the indentation rule configuration.
      * <p>
-     * If the indentation rule is active but has no mappings, a {@link ConfigurationException} is thrown.
-     * Otherwise, if the rule is inactive, validation is skipped, and mappings are reset.
+     * If the indentation rule is active but has no mappings, a {@link IllegalArgumentException} is thrown.
+     * Otherwise, if the rule is inactive, validation is skipped.
      *
      *
-     * @throws ConfigurationException if the indentation rule is active but has no mappings.
+     * @throws IllegalArgumentException if the indentation rule is active but has no mappings.
      */
-    public void validate() {
+    public void validate() throws IllegalArgumentException {
         validateIndentation();
     }
 
-    private void validateIndentation() {
+    private void validateIndentation () throws IllegalArgumentException {
         if (indentation.isActive()) {
             if (indentation.getMappings().isEmpty()) {
-                throw new ConfigurationException("Indentation rule must have at least one mapping when is active.");
+                throw new IllegalArgumentException("Indentation rule must have at least one mapping when is active.");
             }
         } else {
-            log.info("Indentation rule is inactive. Skipping validation.");
-            indentation.setMappings(new EnumMap<>(GherkinElement.class));
+            log.info("Indentation rule is inactive. Skipping validation of configured properties.");
         }
     }
 }

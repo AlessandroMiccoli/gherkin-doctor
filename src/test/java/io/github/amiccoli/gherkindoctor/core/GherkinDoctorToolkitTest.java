@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE;
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
 import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockInvalidGherkinDocument;
-import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDoctorConfigurationHelper.mockGherkinDoctorConfiguration;
 import static io.github.amiccoli.gherkindoctor.rule.RuleType.INDENTATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;

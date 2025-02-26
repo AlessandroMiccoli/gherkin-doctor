@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.github.amiccoli.gherkindoctor.helper.AnnotationTestHelper.getAnnotationForMethod;
 import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDoctorConfigurationHelper.mockGherkinDoctorConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -52,5 +53,19 @@ class RuleLoaderTest {
                 .containsExactly(mockRule);
 
         verify(mockFactory).create(mockGherkinDoctorConfig);
+    }
+
+    @Test
+    void shouldHaveAssignedBeanAnnotationToRulesMethod() {
+        // Given
+        // When
+        var beanAnnotation = getAnnotationForMethod(
+                org.springframework.context.annotation.Bean.class,
+                "rules",
+                RuleLoader.class
+        );
+
+        // Then
+        assertThat(beanAnnotation).isNotNull();
     }
 }

@@ -11,6 +11,7 @@ import static io.github.amiccoli.gherkindoctor.helper.RulesConfigurationHelper.m
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 class GherkinDoctorConfigurationTest {
@@ -56,7 +57,7 @@ class GherkinDoctorConfigurationTest {
     }
 
     @Test
-    void shouldHandleConfigurationExceptionWhenFeatureLocationIsNull() {
+    void shouldThrowConfigurationExceptionWhenFeatureLocationIsNull() {
         // Given
         var mockRulesConfig = mockRulesConfiguration();
         var config = new GherkinDoctorConfiguration(null, mockRulesConfig);
@@ -78,5 +79,20 @@ class GherkinDoctorConfigurationTest {
 
         // Then
         verify(mockRulesConfig).validate();
+    }
+
+    @Test
+    void shouldThrowConfigurationExceptionWhenValidateRulesThrowIllegalArgumentException() {
+        // Given
+        var mockRulesConfig = mockRulesConfiguration();
+        var config = new GherkinDoctorConfiguration("anyFeatureLocation", mockRulesConfig);
+
+        doThrow(new IllegalArgumentException("any error")).when(mockRulesConfig).validate();
+
+        // When
+        // Then
+        assertThatThrownBy(config::postConstruct)
+                .isInstanceOf(ConfigurationException.class)
+                .hasMessage("any error");
     }
 }
