@@ -6,6 +6,12 @@
       "description": "The location of the Gherkin feature files to be read and parsed.",
       "defaultValue": "features",
       "sourceType": "io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration"
+    },
+    {
+      "name": "gherkin-doctor.rules",
+      "type": "io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration",
+      "description": "Configuration for Gherkin Doctor rules.",
+      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration"
     }
   ]
 }

@@ -1,6 +1,6 @@
  Feature: Fake feature
 
-  Background:
+   Background:
     Given any background precondition
 
   Scenario: Fake scenario

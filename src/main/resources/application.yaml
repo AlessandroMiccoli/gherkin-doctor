@@ -4,10 +4,10 @@ gherkin-doctor:
     indentation:
       active: true
       mappings:
-        feature: 0
-        background: 2
-        scenario: 2
-        step: 4
+        feature: 1
+        background: 3
+        scenario: 3
+        step: 5
 
 spring:
   main:

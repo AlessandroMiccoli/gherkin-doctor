@@ -1,6 +1,7 @@
 package io.github.amiccoli.gherkindoctor;
 
 import io.github.amiccoli.gherkindoctor.core.GherkinDoctorToolkit;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -22,7 +23,28 @@ public class SpringGherkinDoctorApplication {
     @ShellMethod(key = "gherkin-doctor lint", value = "Analyzes Gherkin documents for rule violations and reports issues.")
     public void lint() {
         var mappedRuleErrors = toolkit.lint();
-        log.error(mappedRuleErrors.toString());
+
+        if(!mappedRuleErrors.isEmpty()) {
+            mappedRuleErrors.forEach((uri, errors) -> {
+                var fileName = uri.substring(uri.lastIndexOf('/') + 1);
+
+                var errorMessages = errors.stream()
+                        .map(error -> ("Line %d - %s - %s -  %s %s").formatted(
+                                error.getLine(),
+                                error.getType(),
+                                error.getKeyword(),
+                                error.getActual(),
+                                error.getExpected())
+                        )
+                        .collect(Collectors.joining(System.lineSeparator()));
+
+                log.error("Feature file: {} - Total errors: {}{}{}",
+                        fileName,
+                        errors.size(),
+                        System.lineSeparator(),
+                        errorMessages);
+            });
+        }
     }
 }
 

@@ -46,10 +46,14 @@ public class GherkinDoctorConfiguration {
      */
     @PostConstruct
     public void postConstruct() {
-        if (featureLocation == null) {
-            throw new ConfigurationException("Feature resource location is a mandatory property.");
-        }
+        try {
+            if (featureLocation == null) {
+                throw new IllegalArgumentException("Feature resource location is a mandatory property.");
+            }
 
-        rules.validate();
+            rules.validate();
+        } catch (IllegalArgumentException exception) {
+            throw new ConfigurationException(exception.getMessage());
+        }
     }
 }

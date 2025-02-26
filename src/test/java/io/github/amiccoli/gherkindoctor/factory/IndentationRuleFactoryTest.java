@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE;
-import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
 import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDoctorConfigurationHelper.mockGherkinDoctorConfiguration;
 import static io.github.amiccoli.gherkindoctor.helper.MockRuleConstraintHelper.mockIndentationRuleConfiguration;
 import static io.github.amiccoli.gherkindoctor.helper.RulesConfigurationHelper.mockRulesConfiguration;
@@ -30,16 +29,9 @@ class IndentationRuleFactoryTest {
     }
 
     @Test
-    void shouldBeAbleToCreateIndentationRule() {
+    void shouldBeAbleToCreateIndentationRuleWithExistingMappingsWhenRuleIsActive() {
         // Given
         given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
-        var mockIndentationRule = mockIndentationRuleConfiguration(
-                new EnumMap<>(GherkinElement.class) {{
-                    put(FEATURE, 1L);
-                    put(SCENARIO, 3L);
-                }}
-        );
-        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
 
         // When
         var rule = factory.create(mockGherkinDoctorConfig);
@@ -53,5 +45,29 @@ class IndentationRuleFactoryTest {
                 .hasSize(2)
                 .containsEntry(FEATURE, 1L)
                 .containsEntry(GherkinElement.SCENARIO, 3L);
+    }
+
+    @Test
+    void shouldCreteIndentationRuleErasingMappingWhenRuleIsInactive() {
+        // Given
+        given(mockGherkinDoctorConfig.getRules()).willReturn(mockRulesConfig);
+        var mockIndentationRule = mockIndentationRuleConfiguration(
+                new EnumMap<>(GherkinElement.class) {{
+                    put(FEATURE, 1L);
+                }}
+        );
+        given(mockRulesConfig.getIndentation()).willReturn(mockIndentationRule);
+        given(mockIndentationRule.isActive()).willReturn(false);
+
+        // When
+        var rule = factory.create(mockGherkinDoctorConfig);
+
+        // Then
+        assertThat(rule)
+                .isNotNull()
+                .isInstanceOf(IndentationRule.class);
+
+        assertThat(((IndentationRule) rule).getConstraints())
+                .isEmpty();
     }
 }

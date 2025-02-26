@@ -1,7 +1,5 @@
 package io.github.amiccoli.gherkindoctor.configuration;
 
-import io.github.amiccoli.gherkindoctor.exception.ConfigurationException;
-import java.util.EnumMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,24 +18,23 @@ public class RulesConfiguration {
     /**
      * Validates the indentation rule configuration.
      * <p>
-     * If the indentation rule is active but has no mappings, a {@link ConfigurationException} is thrown.
-     * Otherwise, if the rule is inactive, validation is skipped, and mappings are reset.
+     * If the indentation rule is active but has no mappings, a {@link IllegalArgumentException} is thrown.
+     * Otherwise, if the rule is inactive, validation is skipped.
      *
      *
-     * @throws ConfigurationException if the indentation rule is active but has no mappings.
+     * @throws IllegalArgumentException if the indentation rule is active but has no mappings.
      */
-    public void validate() {
+    public void validate() throws IllegalArgumentException {
         validateIndentation();
     }
 
-    private void validateIndentation() {
+    private void validateIndentation () throws IllegalArgumentException {
         if (indentation.isActive()) {
             if (indentation.getMappings().isEmpty()) {
-                throw new ConfigurationException("Indentation rule must have at least one mapping when is active.");
+                throw new IllegalArgumentException("Indentation rule must have at least one mapping when is active.");
             }
         } else {
-            log.info("Indentation rule is inactive. Skipping validation.");
-            indentation.setMappings(new EnumMap<>(GherkinElement.class));
+            log.info("Indentation rule is inactive. Skipping validation of configured properties.");
         }
     }
 }
