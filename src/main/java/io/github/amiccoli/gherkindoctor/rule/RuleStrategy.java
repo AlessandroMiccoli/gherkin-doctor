@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.github.amiccoli.gherkindoctor.factory;
+package io.github.amiccoli.gherkindoctor.rule;
 
-import io.github.amiccoli.gherkindoctor.configuration.RulesSetting;
-import io.github.amiccoli.gherkindoctor.rule.RuleStrategy;
+import io.cucumber.messages.types.GherkinDocument;
+import java.util.List;
 
-public interface RuleFactory {
+public interface RuleStrategy {
 
     /**
-     * Creates a {@link RuleStrategy} based on the provided {@link RulesSetting}.
+     * Applies the rule to a given Gherkin document.
      * <p>
-     * Implementations of this method should configure and return the appropriate rule strategy
-     * according to the given settings.
-     * </p>
+     * This method performs the validation logic defined by the rule,
+     * checking the provided Gherkin document for compliance. It may return
+     * a list of rule errors encountered during the application (if present).
      *
-     * @param rulesSetting the configuration settings for rule strategy.
-     * @return a {@link RuleStrategy} instance configured according to the provided settings.
+     * @param gherkinDocument the Gherkin document to which the rule will be applied
+     * @return a list of rule errors, or an empty list if no errors are found
      */
-    RuleStrategy create(RulesSetting rulesSetting);
+    List<RuleError> apply(GherkinDocument gherkinDocument);
 }

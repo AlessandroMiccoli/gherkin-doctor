@@ -1,5 +1,5 @@
 gherkin-doctor:
-  feature-location: "features"
+  feature-location: "fake-feature-location"
   rules:
     indentation:
       active: true

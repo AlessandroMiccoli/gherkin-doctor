@@ -32,6 +32,7 @@ public class GherkinUtil {
      * @return the feature URI if present
      * @throws MissingGherkinElementException if the feature URI is not present
      */
+    @Deprecated
     public static String requireGherkinDocUri(Optional<String> featureUri) {
         return requirePresent(featureUri, "Feature URI is missing.");
     }
@@ -43,6 +44,7 @@ public class GherkinUtil {
      * @return the {@link Feature} if present
      * @throws MissingGherkinElementException if the feature is not present
      */
+    @Deprecated
     public static Feature requireFeature(Optional<Feature> feature) {
         return requirePresent(feature, "Feature is missing.");
     }
@@ -54,10 +56,12 @@ public class GherkinUtil {
      * @return the column value if present
      * @throws MissingGherkinElementException if the column value is not present
      */
+    @Deprecated
     public static Long requireColumn(Optional<Long> column) {
         return requirePresent(column, "Location column is missing.");
     }
 
+    @Deprecated
     private static <T> T requirePresent(Optional<T> optional, String errorMessage) {
         return optional.orElseThrow(() -> new MissingGherkinElementException(errorMessage));
     }

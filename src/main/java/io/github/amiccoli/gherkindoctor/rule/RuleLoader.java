@@ -16,24 +16,29 @@
 
 package io.github.amiccoli.gherkindoctor.rule;
 
-import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
+import io.github.amiccoli.gherkindoctor.configuration.RulesSetting;
 import io.github.amiccoli.gherkindoctor.factory.RuleFactory;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
-@Component
 @AllArgsConstructor
 public class RuleLoader {
 
-    private final GherkinDoctorConfiguration configuration;
     private final List<RuleFactory> factories;
 
-    @Bean
-    public List<Rule> rules() {
+    /**
+     * Creates a list of {@link RuleStrategy} instances based on the provided {@link RulesSetting}.
+     * <p>
+     * Each registered {@link RuleFactory} is used to generate a corresponding {@link RuleStrategy}
+     * using the given rules configuration.
+     * </p>
+     *
+     * @param rulesSetting the configuration settings used to create rule strategies.
+     * @return a list of {@link RuleStrategy} instances based on the provided settings.
+     */
+    public List<RuleStrategy> rules(RulesSetting rulesSetting) {
         return factories.stream()
-                .map(factory -> factory.create(configuration))
+                .map(factory -> factory.create(rulesSetting))
                 .toList();
     }
 }

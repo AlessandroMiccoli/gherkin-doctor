@@ -59,6 +59,3 @@ gradle.properties
 
 # Ignore local env file
 .env
-
-# Ignore shell logs
-spring-shell.log

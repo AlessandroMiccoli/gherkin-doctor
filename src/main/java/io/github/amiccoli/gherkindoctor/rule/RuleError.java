@@ -22,12 +22,12 @@ import lombok.*;
 import static io.github.amiccoli.gherkindoctor.rule.RuleType.INDENTATION;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
 public class RuleError {
+
     String uri;
     RuleType type;
     GherkinElement keyword;

@@ -5,13 +5,13 @@
       "type": "java.lang.String",
       "description": "The location of the Gherkin feature files to be read and parsed.",
       "defaultValue": "features",
-      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration"
+      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.DoctorConfiguration"
     },
     {
       "name": "gherkin-doctor.rules",
-      "type": "io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration",
+      "type": "io.github.amiccoli.gherkindoctor.configuration.RulesSetting",
       "description": "Configuration for Gherkin Doctor rules.",
-      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.RulesConfiguration"
+      "sourceType": "io.github.amiccoli.gherkindoctor.configuration.RulesSetting"
     }
   ]
 }

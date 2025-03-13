@@ -1,0 +1,4 @@
+gherkin-doctor:
+  feature-location: "features"
+  rules:
+    invalid-rule:

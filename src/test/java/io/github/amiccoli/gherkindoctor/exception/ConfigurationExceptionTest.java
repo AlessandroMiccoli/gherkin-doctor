@@ -29,6 +29,17 @@ class ConfigurationExceptionTest {
         assertEquals("Test message.", error.getMessage());
     }
 
+    @Test
+    void shouldRemoveOneDotFromMessageWhenMessageEndsWithTwoDots() {
+        // Given
+        var message = "Test message..";
+
+        // When
+        var error = new ConfigurationException(message);
+
+        // Then
+        assertEquals("Test message.", error.getMessage());
+    }
 
     @Test
     void shouldConstructorExceptionWithCause() {

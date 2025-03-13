@@ -5,7 +5,7 @@ import io.github.amiccoli.gherkindoctor.exception.MissingGherkinElementException
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-import static io.github.amiccoli.gherkindoctor.helper.GherkinDocumentHelper.mockValidGherkinDocument;
+import static io.github.amiccoli.gherkindoctor.helper.MockGherkinDocumentHelper.mockValidGherkinDocument;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

@@ -17,8 +17,8 @@
 package io.github.amiccoli.gherkindoctor.util;
 
 import io.github.amiccoli.gherkindoctor.exception.InvalidFileException;
-import io.github.amiccoli.gherkindoctor.reader.FeatureReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -63,7 +63,6 @@ public class FileUtil {
     public static String readFile(Path inputPath) {
         try {
             return Files.readString(inputPath);
-
         } catch (IOException exception) {
             throw new InvalidFileException("Not capable to read file [%s]."
                     .formatted(exception.getMessage())
@@ -71,8 +70,30 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Retrieves an {@link InputStream} for the specified file path.
+     * <p>
+     * This method attempts to load the file as a resource using the class loader.
+     * If the file is not found, an {@link InvalidFileException} is thrown.
+     * </p>
+     *
+     * @param inputPath the path to the resource file.
+     * @return an {@link InputStream} for reading the file.
+     * @throws IOException if an I/O error occurs while accessing the file.
+     * @throws InvalidFileException if the file cannot be found.
+     */
+    public static InputStream getInputStream(String inputPath) throws IOException {
+        val inputStream = FileUtil.class.getClassLoader().getResourceAsStream(inputPath);
+
+        if (inputStream == null) {
+            throw new InvalidFileException("File not found: [%s].".formatted(inputPath));
+        }
+
+        return inputStream;
+    }
+
     private static Path getRelativePath(String inputPath) {
-        var resourceUrl = FeatureReader.class.getClassLoader().getResource(inputPath);
+        val resourceUrl = FileUtil.class.getClassLoader().getResource(inputPath);
 
         if (resourceUrl == null) {
             throw new InvalidFileException("Resource not found for path [%s]."

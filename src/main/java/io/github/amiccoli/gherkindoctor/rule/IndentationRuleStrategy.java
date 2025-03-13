@@ -16,6 +16,14 @@
 
 package io.github.amiccoli.gherkindoctor.rule;
 
+import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.BACKGROUND;
+import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE;
+import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
+import static io.github.amiccoli.gherkindoctor.rule.RuleError.createForIndentationRule;
+import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireColumn;
+import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireFeature;
+import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireGherkinDocUri;
+
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
@@ -25,21 +33,15 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.BACKGROUND;
-import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.FEATURE;
-import static io.github.amiccoli.gherkindoctor.configuration.GherkinElement.SCENARIO;
-import static io.github.amiccoli.gherkindoctor.rule.RuleError.createForIndentationRule;
-import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireColumn;
-import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireFeature;
-import static io.github.amiccoli.gherkindoctor.util.GherkinUtil.requireGherkinDocUri;
 
 @Slf4j
 @Getter
 @AllArgsConstructor
-public class IndentationRule implements Rule {
+@ToString
+public class IndentationRuleStrategy implements RuleStrategy {
 
     private final EnumMap<GherkinElement, Long> constraints;
 
@@ -48,7 +50,7 @@ public class IndentationRule implements Rule {
         val feature = requireFeature(gherkinDocument.getFeature());
         val docUri = requireGherkinDocUri(gherkinDocument.getUri());
 
-        return constraints.keySet().stream()
+        return getConstraints().keySet().stream()
                 .flatMap(element -> switch (element) {
                     case FEATURE -> validateFeatureIndentation(feature, docUri);
                     case BACKGROUND -> feature.getChildren().stream()

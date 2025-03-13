@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.amiccoli.gherkindoctor.rule;
+package io.github.amiccoli.gherkindoctor.configuration;
 
-import io.cucumber.messages.types.GherkinDocument;
-import java.util.List;
+import java.util.EnumMap;
+import lombok.*;
 
-public interface Rule {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@ToString
+public class BaseRuleSetting<T> {
 
-    /**
-     * Applies the rule to a given Gherkin document.
-     * <p>
-     * This method performs the validation logic defined by the rule,
-     * checking the provided Gherkin document for compliance. It may return
-     * a list of rule errors encountered during the application (if present).
-     *
-     * @param gherkinDocument the Gherkin document to which the rule will be applied
-     * @return a list of rule errors, or an empty list if no errors are found
-     */
-    List<RuleError> apply(GherkinDocument gherkinDocument);
+    boolean active = false;
+    EnumMap<GherkinElement, T> mappings = new EnumMap<>(GherkinElement.class);
 }

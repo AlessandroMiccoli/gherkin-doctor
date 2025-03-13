@@ -16,10 +16,30 @@
 
 package io.github.amiccoli.gherkindoctor.exception;
 
-import lombok.experimental.StandardException;
-
 /**
  * Exception thrown when there is a misconfiguration in the application.
  */
-@StandardException
-public class ConfigurationException extends RuntimeException { }
+public class ConfigurationException extends RuntimeException {
+    public ConfigurationException() {
+        super();
+    }
+
+    public ConfigurationException(String message) {
+        super(buildMessage(message));
+    }
+
+    public ConfigurationException(String message, Throwable cause) {
+        super(buildMessage(message), cause);
+    }
+
+    public ConfigurationException(Throwable cause) {
+        super(cause);
+    }
+
+    private static String buildMessage(String message) {
+        if (message.endsWith("..")) {
+            message = message.substring(0, message.length() - 1);
+        }
+        return message;
+    }
+}
