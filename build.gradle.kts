@@ -11,16 +11,6 @@ plugins {
 
     // https://plugins.gradle.org/plugin/org.sonarqube
     id("org.sonarqube") version "6.0.1.5171" apply false
-
-    /*=============*/
-    /* Spring Boot */
-    /*=============*/
-
-    // https://plugins.gradle.org/plugin/org.springframework.boot
-    id("org.springframework.boot") version "3.4.2"
-
-    // https://plugins.gradle.org/plugin/io.spring.dependency-management
-    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "io.github.amiccoli"
@@ -30,75 +20,67 @@ repositories {
     mavenCentral()
 }
 
-val logbackVersion = "7.4"
-val springCloudVersion = "2024.0.0"
-val springShellVersion = "3.4.0"
+val logbackVersion = "1.5.17"
+val slf4jVersion = "2.0.17"
 val cucumberGherkinVersion = "31.0.0"
 val cucumberMessagesVersion = "27.2.0"
 val jUnitVersion = "1.11.4"
 val mockitoVersion = "5.2.0"
+val junitJupiterVersion = "5.12.0"
+val assertjVersion = "3.27.3"
+val jacksonYamlVersion = "2.18.3"
+val lombokVersion = "1.18.36"
 
-dependencyManagement {
-    imports {
-        // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-        mavenBom("org.springframework.shell:spring-shell-dependencies:${springShellVersion}")
-    }
-}
 
 dependencies {
-    /*=============*/
-    /* Spring Boot */
-    /*=============*/
-    implementation("org.springframework.boot:spring-boot-starter-web")
-
-    //noinspection GradlePackageUpdate
-    implementation("org.springframework.boot:spring-boot-starter")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
-    //noinspection GradlePackageUpdate
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        // Exclusions
-        exclude(group = "org.hamcrest", module = "hamcrest")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-    }
-    testCompileOnly("org.projectlombok:lombok")
-    testAnnotationProcessor("org.projectlombok:lombok")
-
-    implementation("org.springframework.shell:spring-shell-starter")
-
-    /*=========*/
-    /* Logging */
-    /*=========*/
-    // https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder
-    implementation("org.springframework.boot:spring-boot-starter-logging")
-
-    implementation("net.logstash.logback:logstash-logback-encoder:${logbackVersion}")
-
     /*====================*/
     /* BDD Test Framework */
     /*====================*/
+
     // https://mvnrepository.com/artifact/io.cucumber/gherkin
     implementation("io.cucumber:gherkin:${cucumberGherkinVersion}")
 
     // https://mvnrepository.com/artifact/io.cucumber/messages
     implementation("io.cucumber:messages:${cucumberMessagesVersion}")
 
+    /*=======*/
+    /* JUnit */
+    /*=======*/
+
     // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite
-    implementation("org.junit.platform:junit-platform-suite:${jUnitVersion}")
+    testImplementation("org.junit.platform:junit-platform-suite:${jUnitVersion}")
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-inline
     testImplementation("org.mockito:mockito-inline:${mockitoVersion}")
-}
 
-tasks.jar {
-    enabled = true
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
-tasks.bootJar {
-    enabled = false
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
+
+    /*=========*/
+    /* Logging */
+    /*=========*/
+
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation("ch.qos.logback:logback-classic:${logbackVersion}")
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation("org.slf4j:slf4j-api:${slf4jVersion}")
+
+    /*=========*/
+    /* Utility */
+    /*=========*/
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonYamlVersion}")
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    implementation("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }
 
 java {

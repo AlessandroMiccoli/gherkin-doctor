@@ -7,7 +7,7 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-public class GherkinDocumentHelper {
+public class MockGherkinDocumentHelper {
 
     public static GherkinDocument mockValidGherkinDocument() {
         var mockGherkinDocument = mock(GherkinDocument.class);
@@ -37,7 +37,7 @@ public class GherkinDocumentHelper {
         var mockBackground = mockBackground(isValid);
 
         given(mockFeature.getLocation()).willReturn(mockLocation);
-        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 1L : 2L));
+        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 0L : 2L));
         given(mockFeature.getChildren()).willReturn(List.of(mockFeatureChild));
         given(mockFeatureChild.getScenario()).willReturn(Optional.of(mockScenario));
         given(mockFeatureChild.getBackground()).willReturn(Optional.of(mockBackground));
@@ -50,7 +50,7 @@ public class GherkinDocumentHelper {
         var mockLocation = mock(Location.class);
 
         given(mockBackground.getLocation()).willReturn(mockLocation);
-        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 3L : 5L));
+        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 2L : 5L));
 
         return mockBackground;
     }
@@ -60,7 +60,7 @@ public class GherkinDocumentHelper {
         var mockLocation = mock(Location.class);
 
         given(mockScenario.getLocation()).willReturn(mockLocation);
-        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 3L : 6L));
+        given(mockLocation.getColumn()).willReturn(Optional.of(isValid ? 2L : 6L));
 
         return mockScenario;
     }

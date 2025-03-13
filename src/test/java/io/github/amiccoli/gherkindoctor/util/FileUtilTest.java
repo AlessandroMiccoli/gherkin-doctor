@@ -1,8 +1,8 @@
 package io.github.amiccoli.gherkindoctor.util;
 
 import io.github.amiccoli.gherkindoctor.exception.InvalidFileException;
+import java.io.IOException;
 import java.nio.file.Path;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,11 +44,16 @@ class FileUtilTest {
     @Test
     void shouldReadFeatureFileWhenValidLocationIsProvided() {
         // Given
-        val relativePath = getRelativeTestPath("features/read/FakeReadTest.feature");
+        var resource = "features/read/FakeReadTest.feature";
+        val relativePath = requireNonNull(
+                FileUtilTest.class.getClassLoader().getResource(resource),
+                "Resource not found for [%s].".formatted(resource)
+        ).getPath();
 
         // When
         val content = FileUtil.readFile(Path.of(relativePath));
 
+        // Then
         assertThat(content)
                 .as("Content of the feature file should match the expected text")
                 .isNotNull()
@@ -69,11 +74,23 @@ class FileUtilTest {
 
     }
 
-    @SneakyThrows
-    public static String getRelativeTestPath(String resource) {
-        return requireNonNull(
-                FileUtilTest.class.getClassLoader().getResource(resource),
-                "Resource not found for [%s]".formatted(resource)
-        ).getPath();
+    @Test
+    void shouldGetInputStreamWhenValidFileIsProvided() throws IOException {
+        // Given
+        // When
+        val inputStream = FileUtil.getInputStream("gherkin-doctor-valid.yaml");
+
+        // Then
+        assertThat(inputStream).isNotNull();
+    }
+
+    @Test
+    void shouldThrowInvalidFileExceptionWHneFileIsMissing() throws IOException {
+        // Given
+        // When
+        // Then
+        assertThatThrownBy(() -> FileUtil.getInputStream("missing-gherkin-doctor.yaml"))
+                .isInstanceOf(InvalidFileException.class)
+                .hasMessage("File not found: [missing-gherkin-doctor.yaml].");
     }
 }

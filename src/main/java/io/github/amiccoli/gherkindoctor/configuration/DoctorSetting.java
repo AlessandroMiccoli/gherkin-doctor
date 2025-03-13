@@ -16,11 +16,8 @@
 
 package io.github.amiccoli.gherkindoctor.configuration;
 
-import io.github.amiccoli.gherkindoctor.exception.ConfigurationException;
-import jakarta.annotation.PostConstruct;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration properties for the Gherkin Doctor application.
@@ -39,37 +36,32 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Configuration
-@ConfigurationProperties(prefix = "gherkin-doctor")
+@EqualsAndHashCode
 @ToString
-public class GherkinDoctorConfiguration {
+public class DoctorSetting {
 
+    @JsonProperty("feature-location")
     private String featureLocation;
-    private RulesConfiguration rules;
+
+    @JsonProperty("rules")
+    private RulesSetting rulesSetting;
 
     /**
-     * Initializes the class after the dependencies are injected.
-     * <p>
-     * This method is called automatically after the object is constructed and
-     * all dependencies are injected by the framework. It checks whether the
-     * feature location is provided and validates the configuration rules.
-     * </p>
+     * Validates the configuration settings for the feature location and rules.
      *
-     * @throws ConfigurationException if the feature location is not set (null) or if validation fails.
+     * @throws IllegalArgumentException if the feature location is not set or if rule validation fails.
      */
-    @PostConstruct
-    public void postConstruct() {
+    public void validate() {
         try {
             if (featureLocation == null) {
                 throw new IllegalArgumentException("Feature resource location is a mandatory property.");
             }
 
-            rules.validate();
+            rulesSetting.validate();
         } catch (IllegalArgumentException exception) {
-            throw new ConfigurationException(exception.getMessage());
+            throw new IllegalArgumentException(exception.getMessage());
         }
     }
 }

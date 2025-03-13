@@ -5,24 +5,24 @@ import io.github.amiccoli.gherkindoctor.helper.LoggerTestHelper;
 import java.util.EnumMap;
 import org.junit.jupiter.api.Test;
 
-import static io.github.amiccoli.gherkindoctor.helper.MockRuleConstraintHelper.mockIndentationRuleConfiguration;
+import static io.github.amiccoli.gherkindoctor.helper.MockRuleSettingHelper.mockIndentationRuleSetting;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
-class RulesConfigurationTest {
+class RulesSettingTest {
 
     @Test
     void shouldHandleIllegalArgumentExceptionWhenIndentationRuleIsActiveButHasNoMappings() {
         // Given
-        var mockIndentationRuleConfig = mockIndentationRuleConfiguration();
-        given(mockIndentationRuleConfig.getMappings()).willReturn(new EnumMap<>(GherkinElement.class));
-        var config = new RulesConfiguration(mockIndentationRuleConfig);
+        var mockIndentationRuleSetting = mockIndentationRuleSetting();
+        given(mockIndentationRuleSetting.getMappings()).willReturn(new EnumMap<>(GherkinElement.class));
+        var setting = new RulesSetting(mockIndentationRuleSetting);
 
         // When
         // Then
-        assertThatThrownBy(config::validate)
+        assertThatThrownBy(setting::validate)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Indentation rule must have at least one mapping when is active.");
     }
@@ -30,14 +30,14 @@ class RulesConfigurationTest {
     @Test
     void shouldSkipValidationWhenIndentationRuleIsInactive() {
         // Given
-        var listAppender = LoggerTestHelper.startLogger(RulesConfiguration.class);
-        var mockIndentationRuleConfig = mockIndentationRuleConfiguration();
-        given(mockIndentationRuleConfig.isActive()).willReturn(false);
-        var config = new RulesConfiguration(mockIndentationRuleConfig);
+        var listAppender = LoggerTestHelper.startLogger(RulesSetting.class);
+        var mockIndentationRuleSetting = mockIndentationRuleSetting();
+        given(mockIndentationRuleSetting.isActive()).willReturn(false);
+        var setting = new RulesSetting(mockIndentationRuleSetting);
 
         // When
         // Then
-        assertThatCode(config::validate)
+        assertThatCode(setting::validate)
                 .doesNotThrowAnyException();
 
         var logMessage = "Indentation rule is inactive. Skipping validation of configured properties.";
@@ -48,14 +48,14 @@ class RulesConfigurationTest {
     @Test
     void shouldPassValidationWhenIndentationRuleIsConfigured() {
         // Given
-        var listAppender = LoggerTestHelper.startLogger(RulesConfiguration.class);
-        var mockIndentationRuleConfig = mockIndentationRuleConfiguration();
+        var listAppender = LoggerTestHelper.startLogger(RulesSetting.class);
+        var mockIndentationRuleSetting = mockIndentationRuleSetting();
 
         // When
-        var config = new RulesConfiguration(mockIndentationRuleConfig);
+        var setting = new RulesSetting(mockIndentationRuleSetting);
 
         // Then
-        assertThatCode(config::validate)
+        assertThatCode(setting::validate)
                 .doesNotThrowAnyException();
 
         assertThat(listAppender.list).isEmpty();

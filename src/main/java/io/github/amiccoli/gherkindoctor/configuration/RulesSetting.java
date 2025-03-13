@@ -16,27 +16,28 @@
 
 package io.github.amiccoli.gherkindoctor.configuration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-@Getter
-@Setter
-@AllArgsConstructor
 @Slf4j
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 @ToString
-public class RulesConfiguration {
+public class RulesSetting {
 
-    BaseRuleConfiguration<Long> indentation;
+    private BaseRuleSetting<Long> indentation;
 
     /**
-     * Validates the indentation rule configuration.
+     * Validates the configured rules. Currently, this includes:
+     * <ul>
+     *     <li>Indentation rule</li>
+     * </ul>
      * <p>
-     * If the indentation rule is active but has no mappings, a {@link IllegalArgumentException} is thrown.
-     * Otherwise, if the rule is inactive, validation is skipped.
-     *
+     * If the rule is active but has no mappings, an {@link IllegalArgumentException} is thrown.
+     * If the rule is inactive, validation is skipped, and a log message is recorded.
+     * </p>
      *
      * @throws IllegalArgumentException if the indentation rule is active but has no mappings.
      */

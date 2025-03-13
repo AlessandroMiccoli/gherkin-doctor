@@ -16,24 +16,22 @@
 
 package io.github.amiccoli.gherkindoctor.factory;
 
-import io.github.amiccoli.gherkindoctor.configuration.GherkinDoctorConfiguration;
 import io.github.amiccoli.gherkindoctor.configuration.GherkinElement;
-import io.github.amiccoli.gherkindoctor.rule.IndentationRule;
-import io.github.amiccoli.gherkindoctor.rule.Rule;
+import io.github.amiccoli.gherkindoctor.configuration.RulesSetting;
+import io.github.amiccoli.gherkindoctor.rule.IndentationRuleStrategy;
+import io.github.amiccoli.gherkindoctor.rule.RuleStrategy;
 import java.util.EnumMap;
-import org.springframework.stereotype.Component;
 
-@Component
 public class IndentationRuleFactory implements RuleFactory {
 
     @Override
-    public Rule create(GherkinDoctorConfiguration gherkinDoctorConfiguration) {
-        var indentationRuleConfig = gherkinDoctorConfiguration.getRules().getIndentation();
+    public RuleStrategy create(RulesSetting rulesSettings) {
+        var indentationRuleConfig = rulesSettings.getIndentation();
 
         if (indentationRuleConfig.isActive()) {
-            return new IndentationRule(indentationRuleConfig.getMappings());
+            return new IndentationRuleStrategy(indentationRuleConfig.getMappings());
         } else {
-            return new IndentationRule(new EnumMap<>(GherkinElement.class));
+            return new IndentationRuleStrategy(new EnumMap<>(GherkinElement.class));
         }
     }
 }
